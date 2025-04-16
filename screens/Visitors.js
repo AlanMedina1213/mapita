@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useContext } from "react";
 import {
   View,
@@ -109,10 +110,21 @@ export default function Visitors() {
         </View>
       )}
     </ScrollView>
+=======
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function Visitors() {
+  return (
+    <View style={styles.container}>
+      <Text>Visitors - Mapita</Text>
+    </View>
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
   );
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   container: {
     padding: 20,
     alignItems: "center",
@@ -144,4 +156,7 @@ const styles = StyleSheet.create({
     color: "red",
     marginBottom: 10,
   },
+=======
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
 });

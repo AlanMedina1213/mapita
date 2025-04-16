@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useContext } from "react";
 import {
   View,
@@ -116,10 +117,25 @@ export default function Login({ navigation }) {
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </ScrollView>
+=======
+import React from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+
+export default function Login({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <Text>Login</Text>
+      <TextInput style={styles.input} placeholder="Email" />
+      <TextInput style={styles.input} placeholder="Password" secureTextEntry />
+      <Button title="Login" onPress={() => navigation.replace('Main')} />
+      <Button title="Register" onPress={() => navigation.navigate('Register')} />
+    </View>
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
   );
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
@@ -175,4 +191,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textDecorationLine: "underline",
   },
+=======
+  container: { flex: 1, justifyContent: 'center', padding: 20 },
+  input: { height: 40, borderBottomWidth: 1, marginBottom: 20 },
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
 });

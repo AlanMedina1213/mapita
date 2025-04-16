@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useContext, useState } from "react";
 import {
   ScrollView,
@@ -52,12 +53,21 @@ export default function Help() {
         "You can report issues directly via the “Support” section or by emailing us at medinajuarez180@gmail.com.",
     },
   ];
+=======
+import React, { useContext } from "react";
+import { ScrollView, Text, StyleSheet } from "react-native";
+import { ThemeContext } from "../context/ThemeContext";
+
+export default function Help() {
+  const { themeStyles } = useContext(ThemeContext);
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
 
   return (
     <ScrollView
       style={{ backgroundColor: themeStyles.background }}
       contentContainerStyle={styles.container}
     >
+<<<<<<< HEAD
       <View style={styles.titleContainer}>
         <Image
           source={require("../assets/help-icon.png")}
@@ -156,6 +166,71 @@ export default function Help() {
         where you can manage settings and preferences.{"\n"}
         <Text style={{ fontWeight: "600" }}>Dark Mode:</Text> A visual theme
         that reduces screen brightness to ease eye strain.
+=======
+      <Text style={[styles.title, { color: themeStyles.text }]}>
+        Centro de Ayuda
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Introducción
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        Bienvenido a la sección de ayuda. Aquí encontrarás orientación clara
+        para resolver tus dudas y utilizar la aplicación de forma eficiente.
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Preguntas Frecuentes (FAQ)
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        - ¿Cómo puedo registrarme?
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        - ¿Puedo acceder sin conexión?
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        - ¿Cómo cambio mi contraseña?
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Guías Paso a Paso
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        Navega por las funciones de la app con instrucciones detalladas y
+        simples de seguir.
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Solución de Problemas
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        ¿Algo no funciona como esperabas? Aquí te damos tips para solucionarlo
+        rápidamente.
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Contacto o Soporte
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        Puedes comunicarte con nuestro equipo en soporte@mapita.com o llamando
+        al (123) 456 7890.
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Videos o Tutoriales
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        Pronto añadiremos contenido visual para facilitar aún más tu
+        experiencia.
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: themeStyles.text }]}>
+        Glosario
+      </Text>
+      <Text style={[styles.paragraph, { color: themeStyles.text }]}>
+        Consulta definiciones clave para que ninguna función o término técnico
+        te detenga.
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
       </Text>
     </ScrollView>
   );
@@ -165,6 +240,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
   },
+<<<<<<< HEAD
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -178,6 +254,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
+=======
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
   },
   sectionTitle: {
     fontSize: 18,
@@ -190,6 +272,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     lineHeight: 22,
   },
+<<<<<<< HEAD
   faqHeader: {
     paddingVertical: 10,
     flexDirection: "row",
@@ -207,4 +290,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     lineHeight: 21,
   },
+=======
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
 });

@@ -1,4 +1,5 @@
 // screens/Profile.js
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, Image } from "react-native";
 import { auth } from "../firebaseConfig";
@@ -40,11 +41,21 @@ export default function Profile({ navigation }) {
       ) : (
         <Text style={styles.text}>No has iniciado sesión</Text>
       )}
+=======
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+
+export default function Profile() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Explora las ubicaciones más buscadas</Text>
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+<<<<<<< HEAD
   container: {
     flex: 1,
     alignItems: "center",
@@ -65,4 +76,8 @@ const styles = StyleSheet.create({
   },
   profileImage: { width: 100, height: 100, borderRadius: 50, marginBottom: 20 },
   text: { fontSize: 18, marginBottom: 10 },
+=======
+  container: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  text: { fontSize: 20 },
+>>>>>>> b0790072320257c117cbf4465b00de0988df263d
 });
