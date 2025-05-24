@@ -15,6 +15,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { ThemeContext } from "../../context/ThemeContext";
+import { getAuthErrorMessage } from "../src/utils/firebaseErrorMessages.js";
 
 export default function Login({ navigation }) {
   const { themeStyles } = useContext(ThemeContext);
@@ -27,7 +28,8 @@ export default function Login({ navigation }) {
       await signInWithEmailAndPassword(auth, email, password);
       navigation.replace("Main");
     } catch (error) {
-      Alert.alert("Error", error.message);
+      const mensaje = getAuthErrorMessage(error.code);
+      Alert.alert("Error", mensaje);
     }
   };
 

@@ -12,29 +12,58 @@ import {
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { ThemeContext } from "../../context/ThemeContext";
+import { getAuthErrorMessage } from "../src/utils/firebaseErrorMessages.js";
+
+// Importación de avatares locales
+const defaultAvatars = [
+  { name: "Avatar 1", source: require("../../assets/avatars/avatar1.png") },
+  { name: "Avatar 2", source: require("../../assets/avatars/avatar2.png") },
+  { name: "Avatar 3", source: require("../../assets/avatars/avatar3.png") },
+  { name: "Avatar 4", source: require("../../assets/avatars/avatar4.png") },
+  { name: "Avatar 5", source: require("../../assets/avatars/avatar5.png") },
+];
 
 export default function Register({ navigation }) {
   const { themeStyles } = useContext(ThemeContext);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState(defaultAvatars[0]);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = async () => {
+    if (!name || !email || !password || !confirm) {
+      Alert.alert("Error", "All fields are required.");
+      return;
+    }
+
     if (password !== confirm) {
       Alert.alert("Error", "Passwords do not match.");
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      await updateProfile(user, {
+        displayName: name,
+        photoURL: selectedAvatar.name, // Guardar nombre o ruta, puedes adaptar esto
+      });
+
       navigation.replace("Main");
     } catch (error) {
-      Alert.alert("Error", error.message);
+      const mensaje = getAuthErrorMessage(error.code);
+      Alert.alert("Error", mensaje);
     }
   };
 
@@ -50,15 +79,54 @@ export default function Register({ navigation }) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <Image
-          source={require("../../assets/splash-icon.png")}
-          style={styles.logo}
-        />
+        <Image source={selectedAvatar.source} style={styles.profileImage} />
+        <Text style={[styles.avatarName, { color: themeStyles.text }]}>
+          {selectedAvatar.name}
+        </Text>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.avatarSelector}
+        >
+          {defaultAvatars.map((avatar, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => setSelectedAvatar(avatar)}
+            >
+              <Image
+                source={avatar.source}
+                style={[
+                  styles.avatarOption,
+                  selectedAvatar.name === avatar.name && styles.selectedAvatar,
+                ]}
+              />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         <Text style={[styles.title, { color: themeStyles.text }]}>
           Create Account
         </Text>
 
-        {/* Email Input */}
+        {/* Inputs */}
+
+        <View style={styles.inputContainer}>
+          <Icon
+            name="account-outline"
+            size={22}
+            color={themeStyles.text}
+            style={styles.icon}
+          />
+          <TextInput
+            style={[styles.input, { color: themeStyles.text }]}
+            placeholder="Name"
+            placeholderTextColor={themeStyles.placeholder}
+            value={name}
+            onChangeText={setName}
+          />
+        </View>
+
         <View style={styles.inputContainer}>
           <Icon
             name="email-outline"
@@ -72,12 +140,11 @@ export default function Register({ navigation }) {
             placeholderTextColor={themeStyles.placeholder}
             value={email}
             onChangeText={setEmail}
-            keyboardType="email-address"
             autoCapitalize="none"
+            keyboardType="email-address"
           />
         </View>
 
-        {/* Password Input */}
         <View style={styles.inputContainer}>
           <Icon
             name="lock-outline"
@@ -89,9 +156,9 @@ export default function Register({ navigation }) {
             style={[styles.input, { color: themeStyles.text, flex: 1 }]}
             placeholder="Password"
             placeholderTextColor={themeStyles.placeholder}
+            secureTextEntry={!showPassword}
             value={password}
             onChangeText={setPassword}
-            secureTextEntry={!showPassword}
           />
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
             <Icon
@@ -102,7 +169,6 @@ export default function Register({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Confirm Password Input */}
         <View style={styles.inputContainer}>
           <Icon
             name="lock-check-outline"
@@ -114,9 +180,9 @@ export default function Register({ navigation }) {
             style={[styles.input, { color: themeStyles.text, flex: 1 }]}
             placeholder="Confirm Password"
             placeholderTextColor={themeStyles.placeholder}
+            secureTextEntry={!showConfirmPassword}
             value={confirm}
             onChangeText={setConfirm}
-            secureTextEntry={!showConfirmPassword}
           />
           <TouchableOpacity
             onPress={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -129,7 +195,6 @@ export default function Register({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Register Button */}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: "#3CB371" }]}
           onPress={handleRegister}
@@ -137,7 +202,6 @@ export default function Register({ navigation }) {
           <Text style={[styles.buttonText, { color: "#fff" }]}>Register</Text>
         </TouchableOpacity>
 
-        {/* Login Link */}
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
           <Text style={[styles.linkText, { color: themeStyles.link }]}>
             Already have an account? Log in
@@ -159,12 +223,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
-  logo: {
+  profileImage: {
     width: 100,
     height: 100,
+    borderRadius: 50,
     alignSelf: "center",
-    marginBottom: 30,
-    resizeMode: "contain",
+    marginBottom: 5,
+    borderWidth: 2,
+    borderColor: "#3CB371",
+  },
+  avatarName: {
+    textAlign: "center",
+    marginBottom: 10,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  avatarSelector: {
+    flexDirection: "row",
+    marginBottom: 20,
+    paddingHorizontal: 5,
+  },
+  avatarOption: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginHorizontal: 5,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  selectedAvatar: {
+    borderColor: "#3CB371",
   },
   title: {
     fontSize: 26,

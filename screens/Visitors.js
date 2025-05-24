@@ -11,6 +11,8 @@ import {
 import QRCode from "react-native-qrcode-svg";
 import { ThemeContext } from "../context/ThemeContext";
 import { useNavigation } from "@react-navigation/native";
+import { firestore } from "../firebaseConfig";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 
 export default function Visitors() {
   const [name, setName] = useState("");
@@ -18,19 +20,36 @@ export default function Visitors() {
   const [number, setNumber] = useState("");
   const [reason, setReason] = useState("");
   const [showQR, setShowQR] = useState(false);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
 
   const { themeStyles } = useContext(ThemeContext);
 
   const qrData = `Nombre: ${name}\nCorreo: ${email}\nNumero: ${number}`;
+
+  // Función para guardar en Firestore
+  const saveVisitorToFirestore = async () => {
+    try {
+      const docRef = await addDoc(collection(firestore, "visitors"), {
+        name,
+        email,
+        number,
+        reason,
+        createdAt: Timestamp.now(),
+      });
+      console.log("Visitor saved with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding visitor: ", error);
+    }
+  };
 
   const handleGenerateQR = () => {
     if (!name || !email || !number || !reason) {
       setError("Please fill in all the fields before generating the QR.");
       setShowQR(false);
     } else {
-      setError(""); 
-      setShowQR(true); 
+      setError("");
+      setShowQR(true);
+      saveVisitorToFirestore(); // Guardar en Firestore
     }
   };
 
@@ -95,7 +114,6 @@ export default function Visitors() {
         multiline
       />
 
-      {/* Mostrar mensaje de error si hay campos vacíos */}
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
       <Button title="Generate code QR" onPress={handleGenerateQR} />

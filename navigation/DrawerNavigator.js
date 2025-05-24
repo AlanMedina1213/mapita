@@ -8,6 +8,7 @@ import About from '../screens/About.js';
 import Help from '../screens/Help.js';
 import Settings from '../screens/Settings.js';
 import PrivacyPolicy from '../screens/PrivacyPolicy.js';
+import VisitorList from "../screens/VisitorList.js";
 
 const Drawer = createDrawerNavigator();
 
@@ -21,6 +22,7 @@ export default function DrawerNavigator() {
       <Drawer.Screen name="Help" component={Help} />
       <Drawer.Screen name="Settings" component={Settings} />
       <Drawer.Screen name="PrivacyPolicy" component={PrivacyPolicy} options={{ title: 'Privacy Policy' }} />
+      <Drawer.Screen name="VisitorList" component={VisitorList} options={{ title: "Visitor Records" }} />
     </Drawer.Navigator>
   );
 }

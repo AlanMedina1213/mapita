@@ -1,18 +1,53 @@
-// screens/Profile.js
-import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button, Image } from "react-native";
+import React, { useState, useCallback } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Button,
+  Image,
+  TextInput,
+  Alert,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { auth } from "../firebaseConfig";
-import { signOut } from "firebase/auth";
+import { signOut, updateProfile } from "firebase/auth";
+
+// Importación de avatares
+const defaultAvatars = [
+  { name: "Avatar 1", source: require("../assets/avatars/avatar1.png") },
+  { name: "Avatar 2", source: require("../assets/avatars/avatar2.png") },
+  { name: "Avatar 3", source: require("../assets/avatars/avatar3.png") },
+  { name: "Avatar 4", source: require("../assets/avatars/avatar4.png") },
+  { name: "Avatar 5", source: require("../assets/avatars/avatar5.png") },
+];
 
 export default function Profile({ navigation }) {
   const [user, setUser] = useState(null);
+  const [displayName, setDisplayName] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState(defaultAvatars[0]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const loadUserData = () => {
     const currentUser = auth.currentUser;
     if (currentUser) {
       setUser(currentUser);
+      setDisplayName(currentUser.displayName || "");
+
+      const avatarFound = defaultAvatars.find(
+        (avatar) => avatar.name === currentUser.photoURL
+      );
+      setSelectedAvatar(avatarFound || defaultAvatars[0]);
     }
-  }, []);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      loadUserData();
+    }, [])
+  );
 
   const handleLogout = async () => {
     try {
@@ -23,46 +58,137 @@ export default function Profile({ navigation }) {
     }
   };
 
+  const handleUpdateProfile = async () => {
+    try {
+      setLoading(true);
+      await updateProfile(auth.currentUser, {
+        displayName: displayName.trim(),
+        photoURL: selectedAvatar.name,
+      });
+      Alert.alert(
+        "Perfil actualizado",
+        "Tu perfil ha sido actualizado correctamente."
+      );
+      loadUserData();
+    } catch (error) {
+      console.error("Error al actualizar el perfil:", error.message);
+      Alert.alert("Error", "No se pudo actualizar el perfil.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      {user ? (
-        <View style={styles.profileContainer}>
-          <Image
-            source={{ uri: user.photoURL || "https://via.placeholder.com/150" }}
-            style={styles.profileImage}
-          />
-          <Text style={styles.text}>
-            Bienvenido, {user.displayName || "Usuario"}
-          </Text>
-          <Text style={styles.text}>Correo: {user.email}</Text>
-          <Button title="Cerrar sesión" onPress={handleLogout} />
-        </View>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Perfil</Text>
+
+      <Image source={selectedAvatar.source} style={styles.profileImage} />
+      <Text style={styles.avatarName}>{selectedAvatar.name}</Text>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.avatarSelector}
+      >
+        {defaultAvatars.map((avatar, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => setSelectedAvatar(avatar)}
+          >
+            <Image
+              source={avatar.source}
+              style={[
+                styles.avatarOption,
+                selectedAvatar.name === avatar.name && styles.selectedAvatar,
+              ]}
+            />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <Text style={styles.label}>Nombre</Text>
+      <TextInput
+        style={styles.input}
+        value={displayName}
+        onChangeText={setDisplayName}
+        placeholder="Nombre de usuario"
+      />
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#3CB371" />
       ) : (
-        <Text style={styles.text}>No has iniciado sesión</Text>
+        <>
+          <Button
+            title="Actualizar perfil"
+            onPress={handleUpdateProfile}
+            color="#3CB371"
+          />
+          <View style={styles.separator} />
+          <Button
+            title="Cerrar sesión"
+            onPress={handleLogout}
+            color="#d9534f"
+          />
+        </>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     padding: 20,
+    paddingBottom: 50,
+    alignItems: "center",
+    backgroundColor: "#fff",
   },
-  profileContainer: {
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 5,
+    borderWidth: 2,
+    borderColor: "#3CB371",
+  },
+  avatarName: {
+    marginBottom: 10,
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  avatarSelector: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  avatarOption: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    marginHorizontal: 5,
+    borderWidth: 2,
+    borderColor: "transparent",
+  },
+  selectedAvatar: {
+    borderColor: "#3CB371",
+  },
+  label: {
+    alignSelf: "flex-start",
+    marginBottom: 5,
+    fontWeight: "bold",
+  },
+  input: {
     width: "100%",
-    alignItems: "center",
-    padding: 20,
+    height: 50,
+    borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: "#f9f9f9",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
-    elevation: 5,
+    paddingHorizontal: 15,
+    marginBottom: 20,
   },
-  profileImage: { width: 100, height: 100, borderRadius: 50, marginBottom: 20 },
-  text: { fontSize: 18, marginBottom: 10 },
+  separator: {
+    height: 10,
+  },
 });
