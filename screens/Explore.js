@@ -18,6 +18,10 @@ const imagenes = {
   distancia: require("../assets/imagenes_ubicaciones/EducacionDistancia.jpg"),
   computo: require("../assets/imagenes_ubicaciones/CentroComputo.jpg"),
   industrial: require("../assets/imagenes_ubicaciones/IngenieriaIndustrial.jpg"),
+  ciia: require("../assets/imagenes_ubicaciones/CIIA.jpg"),
+  posgrados: require("../assets/imagenes_ubicaciones/DepartamentoPosgrados.jpeg"),
+  alberca: require("../assets/imagenes_ubicaciones/AreaAlberca.jpg"),
+  auditorio: require("../assets/imagenes_ubicaciones/Auditorio.jpg"),
 };
 
 const ubicacionesPopulares = [
@@ -62,6 +66,24 @@ const ubicacionesPopulares = [
     latitud: 21.874521693078133,
     longitud: -102.25887383149015,
     imagen: imagenes.industrial,
+  },
+  {
+   nombre: 'Sala Isóptica de Posgrado, Departamento De Posgrado Y Cuerpos Académicos',
+   latitud: 21.877488887633685,
+   longitud: -102.26054868497796,
+   imagen: imagenes.posgrados,
+  },
+  {
+   nombre: 'Gimnasio Auditorio',
+   latitud: 21.87560466918032,
+   longitud: -102.26069352431139,
+   imagen: imagenes.auditorio,
+  },
+  {
+   nombre: 'Alberca Semi-Olimpica',
+   latitud: 21.876037767825906,
+   longitud: -102.26061037582744,
+   imagen: imagenes.alberca,
   },
 ];
 
