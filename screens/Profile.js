@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import {
   View,
   Text,
@@ -14,8 +14,9 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { auth } from "../firebaseConfig";
 import { signOut, updateProfile } from "firebase/auth";
+import { ThemeContext } from "../context/ThemeContext";
 
-// Importación de avatares
+// Avatares disponibles
 const defaultAvatars = [
   { name: "Avatar 1", source: require("../assets/avatars/avatar1.png") },
   { name: "Avatar 2", source: require("../assets/avatars/avatar2.png") },
@@ -25,6 +26,8 @@ const defaultAvatars = [
 ];
 
 export default function Profile({ navigation }) {
+  const { themeStyles } = useContext(ThemeContext);
+
   const [user, setUser] = useState(null);
   const [displayName, setDisplayName] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState(defaultAvatars[0]);
@@ -35,7 +38,6 @@ export default function Profile({ navigation }) {
     if (currentUser) {
       setUser(currentUser);
       setDisplayName(currentUser.displayName || "");
-
       const avatarFound = defaultAvatars.find(
         (avatar) => avatar.name === currentUser.photoURL
       );
@@ -79,12 +81,24 @@ export default function Profile({ navigation }) {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Perfil</Text>
-
+    <ScrollView
+      contentContainerStyle={[
+        styles.container,
+        { backgroundColor: themeStyles.background },
+      ]}
+    >
       <Image source={selectedAvatar.source} style={styles.profileImage} />
-      <Text style={styles.avatarName}>{selectedAvatar.name}</Text>
+      <Text style={[styles.avatarName, { color: themeStyles.text }]}>
+        {displayName}
+      </Text>
 
+      <View style={styles.buttonWrapper}>
+        <Button title="Cerrar sesión" onPress={handleLogout} color="#d9534f" />
+      </View>
+
+      <Text style={[styles.label, { color: themeStyles.text }]}>
+        Cambiar avatar
+      </Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -106,30 +120,34 @@ export default function Profile({ navigation }) {
         ))}
       </ScrollView>
 
-      <Text style={styles.label}>Nombre</Text>
+      <Text style={[styles.label, { color: themeStyles.text }]}>
+        Nuevo nombre
+      </Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: themeStyles.card,
+            color: themeStyles.text,
+            borderColor: themeStyles.border,
+          },
+        ]}
         value={displayName}
         onChangeText={setDisplayName}
         placeholder="Nombre de usuario"
+        placeholderTextColor={themeStyles.placeholder}
       />
 
       {loading ? (
         <ActivityIndicator size="large" color="#3CB371" />
       ) : (
-        <>
+        <View style={styles.buttonWrapper}>
           <Button
             title="Actualizar perfil"
             onPress={handleUpdateProfile}
             color="#3CB371"
           />
-          <View style={styles.separator} />
-          <Button
-            title="Cerrar sesión"
-            onPress={handleLogout}
-            color="#d9534f"
-          />
-        </>
+        </View>
       )}
     </ScrollView>
   );
@@ -140,25 +158,19 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 50,
     alignItems: "center",
-    backgroundColor: "#fff",
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginBottom: 20,
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 5,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: 10,
     borderWidth: 2,
     borderColor: "#3CB371",
   },
   avatarName: {
-    marginBottom: 10,
+    fontSize: 20,
     fontWeight: "bold",
-    fontSize: 16,
+    marginBottom: 10,
   },
   avatarSelector: {
     flexDirection: "row",
@@ -189,6 +201,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   separator: {
-    height: 10,
+    height: 20,
+  },
+  buttonWrapper: {
+    width: "100%",
+    marginBottom: 10,
   },
 });
