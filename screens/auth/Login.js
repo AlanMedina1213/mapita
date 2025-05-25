@@ -41,6 +41,12 @@ export default function Login({ navigation }) {
       ]}
       keyboardShouldPersistTaps="handled"
     >
+      <View style={styles.headerIconContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+          <Icon name="cog-outline" size={28} color={themeStyles.text} />
+        </TouchableOpacity>
+      </View>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
@@ -176,5 +182,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 14,
     textDecorationLine: "underline",
+  },
+  headerIconContainer: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 10,
   },
 });
